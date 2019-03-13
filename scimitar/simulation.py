@@ -9,8 +9,8 @@ BranchPointDict = namedtuple('BranchPointDict', ['path_name', 'children'])
 def save_samples(samples, samplefile):
     ndims = samples.shape[1]
     samplefile.write('Sample\t' + 
-                    '\t'.join(['Gene%s' % i for i in xrange(ndims)]) + '\n')
-    for i in xrange(samples.shape[0]):
+                    '\t'.join(['Gene%s' % i for i in range(ndims)]) + '\n')
+    for i in range(samples.shape[0]):
         samplefile.write('Sample%s\t' % i + 
                         '\t'.join([str(x) for x in samples[i, :]]) + '\n')
     samplefile.close()
@@ -45,8 +45,8 @@ class SimulatedPath(object):
             ndims = self.samples.shape[1]
             self._basis_covs = np.zeros([len(self.interval), ndims, ndims])
             for ti, t in enumerate(self.interval):
-                for i in xrange(ndims):
-                    for j in xrange(i + 1):
+                for i in range(ndims):
+                    for j in range(i + 1):
                         self._basis_covs[ti, i, j] = self.basis_cov_fun[i, j](t)
         return self._basis_covs
 
@@ -55,7 +55,7 @@ class SimulatedPath(object):
     def means(self):
         if getattr(self, '_means', None) is None:
             ndims = self.samples.shape[1]
-            self._means = np.array([[self.mean_fun[i](t) for i in xrange(ndims)] for t in self.interval])
+            self._means = np.array([[self.mean_fun[i](t) for i in range(ndims)] for t in self.interval])
         return self._means
     
     def _map_to_interval(self, timepoints):
@@ -94,7 +94,7 @@ class SimulatedTree(object):
     def save(self, outprefix=''):
         self.simulated_path.save(outprefix=outprefix)
         if len(self.subtrees) > 0:
-            for tree in self.subtrees.values():
+            for tree in list(self.subtrees.values()):
                 tree.save(outprefix=outprefix)
 
 
@@ -128,8 +128,8 @@ def generate_basis_covariance_function(ndims, degree, max_jitter_points,
                                        random_state=None):
     basis_cov_fun = {}
         
-    for i in xrange(ndims):
-        for j in xrange(0, i + 1):
+    for i in range(ndims):
+        for j in range(0, i + 1):
             enforce_positive = i == j
             basis_cov_fun[i, j] = random_curve(degree, max_jitter_points,
                                                     cov_fac, 
@@ -142,7 +142,7 @@ def generate_basis_covariance_function(ndims, degree, max_jitter_points,
 def generate_mean(ndims, degree, max_jitter_points, mean_fac, 
                   start_mean, end_mean, random_state=None):
     mean_fun = {}
-    for i in xrange(ndims):
+    for i in range(ndims):
         mean_fun[i] = random_curve(degree, max_jitter_points, mean_fac,
                                         start_mean[i], end_mean[i],
                                         random_state=random_state)
@@ -160,7 +160,7 @@ def generate_basis_cov(ndims, cov_fac, cov_connectivity,
     diag = np.diag(cov_matrix)**2
     cov_matrix[np.tril_indices(ndims)] = cov_matrix[np.triu_indices(ndims)]
     #cov_matrix = np.dot(cov_matrix, cov_matrix.T)
-    print 'Non zero %s of %s' % ((cov_matrix != 0).sum(), ndims**2/2)
+    print('Non zero %s of %s' % ((cov_matrix != 0).sum(), ndims**2/2))
     added_fac = 2
     pos_def = False
     while not pos_def:
@@ -176,7 +176,7 @@ def generate_tree(branch_point_dict, ndims, param_dict, random_state):
     tree = SimulatedTree(path, subtrees={})
     subtrees = []
     timepoints = []
-    for timepoint, bpd in branch_point_dict.children.iteritems():
+    for timepoint, bpd in branch_point_dict.children.items():
         start_mean = path.mean([timepoint])[0, :] 
         end_mean = path.mean([1])[0, :]
 
@@ -193,7 +193,7 @@ def generate_tree(branch_point_dict, ndims, param_dict, random_state):
         
         subtree = generate_tree(bpd, ndims, param_dict, random_state)
         subtrees.append(subtree)
-    timepoints = branch_point_dict.children.keys()
+    timepoints = list(branch_point_dict.children.keys())
     tree.add_subtrees(timepoints, subtrees)
     return tree
 
@@ -216,7 +216,7 @@ def generate_path(name, ndims, degree=2, n_samples=100, max_jitter_points=3,
     if end_mean is None:
         direction = np.zeros([ndims])
         mask = random_state.randint(0, high=ndims, size=random_state.randint(1, high=ndims/2))
-        mask = range(ndims/2)
+        mask = list(range(ndims/2))
         direction[mask] = mean_fac * random_state.randn(len(mask))
         end_mean = start_mean + 10*direction
         #end_mean = random_state.randn(ndims)
@@ -235,7 +235,7 @@ def generate_path(name, ndims, degree=2, n_samples=100, max_jitter_points=3,
                                                        random_state=random_state)
 
     timepoints = np.zeros([n_samples])
-    for i in xrange(n_samples):
+    for i in range(n_samples):
         if cell_density == 'uniform':
             timepoints[i] = random_state.rand()
         elif cell_density == 'metastable':
@@ -250,10 +250,10 @@ def generate_path(name, ndims, degree=2, n_samples=100, max_jitter_points=3,
     samples = np.zeros([len(timepoints), ndims])
     
     for ti, t in enumerate(timepoints):
-        mean = np.array([mean_fun[i](t) for i in xrange(ndims)])
+        mean = np.array([mean_fun[i](t) for i in range(ndims)])
         basis_cov = np.zeros([ndims, ndims])
-        for i in xrange(ndims):
-            for j in xrange(0, i + 1):
+        for i in range(ndims):
+            for j in range(0, i + 1):
                 basis_cov[i, j] = basis_cov_fun[i, j](t)
         cov = np.dot(basis_cov, basis_cov.T)
         samples[ti, :] = random_state.multivariate_normal(mean, cov)
@@ -265,7 +265,7 @@ def random_walk_trajectory(ndims, nsteps, random_state):
     curr_point = np.zeros([ndims]) + 1
     trajectory = np.zeros([nsteps + 1, ndims])
     trajectory[0, :] = curr_point
-    for i in xrange(1, nsteps + 1):
+    for i in range(1, nsteps + 1):
         curr_point += random_state.rand(ndims)
         trajectory[i, :] = curr_point
     return trajectory

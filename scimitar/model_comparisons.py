@@ -18,7 +18,7 @@ def align_metastable_graphs(metastable_graph_1, metastable_graph_2):
     munkres_runner = munkres.Munkres()
     for idx1, idx2 in munkres_runner.compute(state_dist_matrix.tolist()):
         state_mapping[utils.create_state_index(idx1)] = utils.create_state_index(idx2)
-    for s1, s2 in state_mapping.iteritems():
+    for s1, s2 in state_mapping.items():
         mapping_scores[s1] = state_dist_matrix[s1.index, s2.index]
     for s1_1, s1_2 in metastable_graph_1.state_edges:
         if (state_mapping[s1_1], state_mapping[s1_2]) in metastable_graph_2.state_edges or \
@@ -47,7 +47,7 @@ def get_edge_fractions(metastable_graphs):
                 e1, e2 = state_mapping[s2], state_mapping[s1]
             all_mapped_edges.append((e1, e2))
     edge_fractions = Counter(all_mapped_edges)
-    for edge, count in edge_fractions.iteritems():
+    for edge, count in edge_fractions.items():
         edge_fractions[edge] = count/(num_graphs*2)
     return edge_fractions
 

@@ -8,14 +8,14 @@ from . import plotting
 def _print_with_options(print_str, options):
     if len(options) == 0:
         print_str += ' -- with default options'
-        print print_str 
+        print(print_str) 
     else:
-        print print_str
-        print '='*len(print_str)
-        print 'Options:'
-        for key, val in options.iteritems():
-            print '%s = %s' % (key, val)
-    print '-'*len(print_str)
+        print(print_str)
+        print('='*len(print_str))
+        print('Options:')
+        for key, val in options.items():
+            print('%s = %s' % (key, val))
+    print('-'*len(print_str))
 
 def preprocess(data_file, n_selected_genes=2000, log_transform=True, transpose=False):
     if transpose:
@@ -26,7 +26,7 @@ def preprocess(data_file, n_selected_genes=2000, log_transform=True, transpose=F
         data_df = pd.read_csv(data_file, sep='\t', comment='"')
         data_df = data_df[(data_df.mean(axis=1) > 5).values]
         data_M = np.array(data_df.iloc[:,1:])
-    selected_genes = sorted(range(data_M.shape[1]), 
+    selected_genes = sorted(list(range(data_M.shape[1])), 
                             key=lambda i: data_M[:,i].std()**2, 
                             reverse=True)[:n_selected_genes]
 

@@ -20,7 +20,7 @@ def all_pairs_shortest_path_weighted(graph):
     for n1 in paths:
         for n2 in paths[n1]:
             path = paths[n1][n2]
-            path_len = sum([graph[path[k-1]][path[k]]['weight'] for k in xrange(1, len(path))])
+            path_len = sum([graph[path[k-1]][path[k]]['weight'] for k in range(1, len(path))])
             path_weighted_lengths[n1][n2] = path_len
             path_weighted_lengths[n2][n1] = path_len
     return paths, path_weighted_lengths
@@ -66,7 +66,7 @@ def _max_path_distances(paths, distance_matrix):
             if len(path) == 1:
                 max_path_distances[n1][n2] = distance_matrix[n1, n2]
             else:
-                for i in xrange(1, len(path)):
+                for i in range(1, len(path)):
                     dists.append(distance_matrix[path[i-1], path[i]])
                 max_path_distances[n1][n2] = max(dists)
     return max_path_distances
@@ -175,7 +175,7 @@ def get_metastable_connections(data, means, memberships,
                     continue
                 diff_vec = (m2 - m1)
                 diff_vec /= norm(diff_vec)
-                for i in xrange(data.shape[0]):
+                for i in range(data.shape[0]):
                     dp = data[i, :]
                     proj_memberships = np.zeros([len(means)])
                     proj = m1 + np.dot(np.dot(diff_vec, dp - m1), diff_vec) 

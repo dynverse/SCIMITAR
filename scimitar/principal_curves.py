@@ -21,7 +21,7 @@ def _map_data_to_principal_line(data_array):
 def _map_data_to_curve(data, curve):
         mapping_indices = np.zeros([data.shape[0]])
         distance_matrix = cdist(data, curve, metric='cosine')
-        for i in xrange(data.shape[0]):
+        for i in range(data.shape[0]):
             mapping_indices[i] = np.argmin(distance_matrix[i, :])
         return mapping_indices
 
@@ -37,7 +37,7 @@ class PrincipalCurve():
         curr_mapping = _map_data_to_principal_line(data_array)
         curr_error = np.inf
         dim_weights = 1./data_array.std(axis=0)
-        for i in xrange(self.n_iters):    
+        for i in range(self.n_iters):    
             curr_curve = np.zeros([len(self.interval), data_array.shape[1]])
             for i, lam in enumerate(self.interval):
                 chosen_indices = np.where((curr_mapping >= lam - self.smooth_thresh) & 

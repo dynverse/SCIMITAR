@@ -4,8 +4,8 @@ from sklearn.cluster import SpectralClustering
 def get_coregulatory_similarity(corr_matrices):
     n_matrices = corr_matrices.shape[0]
     similarity_matrix = np.zeros([n_matrices, n_matrices])
-    for i in xrange(n_matrices):
-        for j in xrange(i + 1, n_matrices):
+    for i in range(n_matrices):
+        for j in range(i + 1, n_matrices):
             mat1 = abs(corr_matrices[i, :, :])
             mat2 = abs(corr_matrices[j, :, :])
             similarity_matrix[i, j] = np.linalg.norm(mat1 - mat2)
@@ -27,9 +27,9 @@ def get_coregulatory_states(corr_matrices, similarity_matrix, n_clusters):
 
 def get_correlation_matrices(covariances):
     corr_matrices = np.zeros(covariances.shape)
-    for i in xrange(covariances.shape[0]):
-        for gene1 in xrange(covariances.shape[1]):
-            for gene2 in xrange(gene1, covariances.shape[2]):
+    for i in range(covariances.shape[0]):
+        for gene1 in range(covariances.shape[1]):
+            for gene2 in range(gene1, covariances.shape[2]):
                 norm_factor = (covariances[i, gene1, gene1] * covariances[i, gene2, gene2])**0.5
                 corr_matrices[i, gene1, gene2] = covariances[i, gene1, gene2]/norm_factor
                 corr_matrices[i, gene2, gene1] = corr_matrices[i, gene1, gene2]
@@ -38,8 +38,8 @@ def get_correlation_matrices(covariances):
 
 def get_degrees_by_gene(corr_matrices):
     degrees = np.zeros([corr_matrices.shape[0], corr_matrices.shape[1]])
-    for i in xrange(corr_matrices.shape[0]):
-        for gene in xrange(corr_matrices.shape[1]):
+    for i in range(corr_matrices.shape[0]):
+        for gene in range(corr_matrices.shape[1]):
             degrees[i, gene] = abs(corr_matrices[i, gene, :]).sum()
     return degrees
 

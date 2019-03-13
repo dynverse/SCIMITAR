@@ -57,7 +57,7 @@ def plot_metastable_graph(data, metastable_graph, n_neighbors=None, plot_edges=T
             state_edges = metastable_graph.state_edges
         if len(edge_weights) == 0:
             edge_weights = metastable_graph.edge_weights
-        for states, weight in edge_weights.iteritems():
+        for states, weight in edge_weights.items():
             state1, state2 = states
             axarr[1].plot([X[state1.index], X[state2.index]], [Y[state1.index], Y[state2.index]],'k-', zorder=1, linewidth=max(0.5, 7*weight))
 
@@ -102,7 +102,7 @@ def plot_transition_model(data, transition_model, n_neighbors=None, embedding=No
                     shade_lowest=False, shade=True, cmap=error_cmap)
     plt.scatter(transformed[:, 0], transformed[:, 1], color=colors, **scatter_plot_args)
     plt.scatter(interp_mean[:, 0], interp_mean[:, 1], marker=(5, 2), color='black')
-    for i in xrange(1, interp_mean.shape[0]):
+    for i in range(1, interp_mean.shape[0]):
         plt.plot([interp_mean[i-1, 0], interp_mean[i, 0]], 
                  [interp_mean[i-1, 1], interp_mean[i, 1]], color='black',
                  linewidth=3)
@@ -174,7 +174,7 @@ def plot_transition_expression(gene_expression, model_means,
     return ax
 
 def plot_coregulatory_states(coreg_states):
-    for ci, coreg_state in coreg_states.iteritems():
+    for ci, coreg_state in coreg_states.items():
         cm = sns.clustermap(coreg_state)
         plt.title(ci)
         cm.ax_heatmap.set_xticks([])

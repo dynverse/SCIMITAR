@@ -4,7 +4,7 @@ import networkx as nx
 import random
 
 from sklearn.covariance import OAS
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 
 from . import log
 from . import morphing_mixture
@@ -43,7 +43,7 @@ class MetastableGraph(object):
             data_to_analyze = data_array
         else:
             data_to_state, _ = self.map_data_to_states(data_array)
-            analyzed_indices = [i for i in xrange(data_array.shape[0]) 
+            analyzed_indices = [i for i in range(data_array.shape[0]) 
                                 if data_to_state[i].index in states or data_to_state[i].color in states]
             data_to_analyze = np.array(data_array[analyzed_indices, :])
         mgm = morphing_mixture.MorphingGaussianMixture(fit_type=fit_type, 
@@ -57,7 +57,7 @@ class MetastableGraph(object):
 def _gmm_from_memberships(data, memberships, covariance_type):
     clusters = set(memberships)
     n_clusters = len(clusters)
-    gmm = GMM(n_components=n_clusters, params='m')
+    gmm = GaussianMixture(n_components=n_clusters, params='m')
     gmm.weights_ = np.ones([n_clusters])/n_clusters
     gmm.means_ = np.zeros([n_clusters, data.shape[1]]) 
     if covariance_type == 'diag':
@@ -100,11 +100,11 @@ def get_gmm_metastable_graph(data, n_states=None, covariance_type='diag',
             bics = np.zeros([MAX_STATES])
             bics[:] = np.inf
             for curr_states in range(2, MAX_STATES):
-                gmm = GMM(n_components=curr_states, params='mc', 
+                gmm = GaussianMixture(n_components=curr_states, params='mc', 
                         covariance_type=covariance_type, n_init=n_init)
                 gmm.fit(data)
                 found_singleton = False
-                for state, sample_count in Counter(gmm.predict(data)).iteritems():
+                for state, sample_count in Counter(gmm.predict(data)).items():
                     if sample_count < MIN_SAMPLES:
                         found_singleton = True
                         break
@@ -131,8 +131,8 @@ def get_gmm_bootstrapped_metastable_graph(data_array, n_states=None, n_boot=100,
                                                            memberships=memberships, **kwargs)
 
     n_states = full_metastable_graph.state_model.centroids.shape[0]
-    for boot_iter in xrange(n_boot):
-        sample_indices = [random.choice(range(data_sample_size)) for _ in xrange(data_sample_size)]
+    for boot_iter in range(n_boot):
+        sample_indices = [random.choice(list(range(data_sample_size))) for _ in range(data_sample_size)]
         if memberships is None:
             sample_memberships = None
         else:
